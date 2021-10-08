@@ -2,7 +2,6 @@ import tkinter
 import PIL.Image
 import PIL.ImageTk
 import cv2
-from numpy.lib.shape_base import column_stack
 
 faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
@@ -64,6 +63,10 @@ class App:
         Btn5_st.config(fg="black", bg="red", font=("Times New Roman", 10))
         Btn5_st.place(x=860, y=440)
 
+        ReBtn = tkinter.Button(window, text="Regresar/Return")
+        ReBtn.config(fg="black", bg="gray", font=("Times New Roman", 15))
+        ReBtn.place(x=945, y=580)
+
         self.video_source1 = video_source1
         self.video_source2 = video_source2
         self.video_source3 = video_source3
@@ -79,42 +82,19 @@ class App:
         self.vid1 = MyVideoCapture(self.video_source1, self.video_source2, self.video_source3, self.video_source4, self.video_source5)
 
         #Cree un canvas que pueda ajustarse al tamaño de fuente de video anterior
-        self.canvas1 = tkinter.Canvas(window, width=360, height=310)
-        self.canvas2 = tkinter.Canvas(window, width=360, height=310)
-        self.canvas3 = tkinter.Canvas(window, width=360, height=310)
-        self.canvas4 = tkinter.Canvas(window, width=360, height=310)
-        self.canvas5 = tkinter.Canvas(window, width=360, height=310)
-        self.canvas1.place(x=0, y=0)
-        self.canvas2.place(x=365, y=0)
-        self.canvas3.place(x=730, y=0)
-        self.canvas4.place(x=0, y=315)
-        self.canvas5.place(x=365, y=315)
-
-        #Después de llamarlo una vez, el método de actualización se llamará automáticamente cada milisegundos de retardo.
-        self.delay = 1
-        self.update()
+        self.cam1 = tkinter.Canvas(window, width=360, height=310, bg="black")
+        self.cam2 = tkinter.Canvas(window, width=360, height=310, bg="black")
+        self.cam3 = tkinter.Canvas(window, width=360, height=310, bg="black")
+        self.cam4 = tkinter.Canvas(window, width=360, height=310, bg="black")
+        self.cam5 = tkinter.Canvas(window, width=360, height=310, bg="black")
+        self.cam1.place(x=0, y=0)
+        self.cam2.place(x=365, y=0)
+        self.cam3.place(x=730, y=0)
+        self.cam4.place(x=0, y=315)
+        self.cam5.place(x=365, y=315)
 
         self.window.mainloop()
         
-
-    def update(self):
-        #Obtener un fotograma de la fuente de video
-        ret1, frame1, ret2, frame2, ret3, frame3, ret4, frame4, ret5, frame5 = self.vid1.get_frame
-
-        if ret1 and ret2 and ret3 and ret4 and ret5:
-                self.photo1 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame1))
-                self.photo2 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame2))
-                self.photo3 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame3))
-                self.photo4 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame4))
-                self.photo5 = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame5))
-                self.canvas1.create_image(0, 0, image=self.photo1, anchor=tkinter.NW)
-                self.canvas2.create_image(0, 0, image=self.photo2, anchor=tkinter.NW)
-                self.canvas3.create_image(0, 0, image=self.photo3, anchor=tkinter.NW)
-                self.canvas4.create_image(0, 0, image=self.photo4, anchor=tkinter.NW)
-                self.canvas5.create_image(0, 0, image=self.photo5, anchor=tkinter.NW)
-
-        self.window.after(self.delay, self.update)
-
 
 class MyVideoCapture:
     def __init__(self, video_source1, video_source2, video_source3, video_source4, video_source5):
@@ -128,7 +108,6 @@ class MyVideoCapture:
         if not self.vid1.isOpened():
             raise ValueError("No se puede abrir la fuente de video", video_source1, video_source2, video_source3, video_source4, video_source5)
 
-    @property
     def get_frame(self):
         ret1 = ""
         ret2 = ""
@@ -219,6 +198,9 @@ def callback():
         L6.place(x=650 ,y=300)
         return
     initial.destroy()
+    
+def end():
+    initial.destroy()
 
 #Ventana de configuracion de Camaras de los robots
 initial = tkinter.Tk()
@@ -241,15 +223,15 @@ L2 = tkinter.Label(initial, text="    Cam2   ")
 L2.place(x=650, y=174)
 E2 = tkinter.Entry(initial, bd =2)
 E2.place(x=710, y=174)
-L3 = tkinter.Label(initial, text="   Cam3    ")
+L3 = tkinter.Label(initial, text="    Cam3   ")
 L3.place(x=650, y=198)
 E3 = tkinter.Entry(initial, bd =2)
 E3.place(x=710, y=198)
-L4 = tkinter.Label(initial, text="   Cam4    ")
+L4 = tkinter.Label(initial, text="    Cam4   ")
 L4.place(x=650, y=222)
 E4 = tkinter.Entry(initial, bd =2)
 E4.place(x=710, y=222)
-L5 = tkinter.Label(initial, text="   Cam5    ")
+L5 = tkinter.Label(initial, text="    Cam5   ")
 L5.place(x=650, y=246)
 E5 = tkinter.Entry(initial, bd =2)
 E5.place(x=710, y=246)
@@ -272,6 +254,10 @@ L10 = tkinter.Message(initial, text="In the GUI you can configure the IP cameras
                      " to view the stream of the robots", aspect=225)
 L10.config(fg="white", bg="midnightblue", font=("Times New Roman", 20))
 L10.place(x=120, y=420)
+
+ExBtn = tkinter.Button(initial, text="Salir/Exit", command=end)
+ExBtn.config(fg="black", bg="red", font=("Times New Roman", 15))
+ExBtn.place(x=980, y=580)
 
 initial.mainloop()
 
